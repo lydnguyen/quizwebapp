@@ -2,7 +2,7 @@
 <project version="4">
   <component name="DBNavigator.Project.DataEditorManager">
     <record-view-column-sorting-type value="BY_INDEX" />
-    <value-preview-text-wrapping value="true" />
+    <value-preview-text-wrapping value="false" />
     <value-preview-pinned value="false" />
   </component>
   <component name="DBNavigator.Project.DatabaseBrowserManager">
@@ -13,14 +13,25 @@
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
     <connection id="3acf3a67-fe3f-49f6-b63f-93fa6d1f0c9f">
-      <console name="Connection" type="STANDARD" schema="" session="Main" />
+      <console name="Connection" type="STANDARD" schema="quizapp" session="Main"><![CDATA[select sum(marks) as totalmks from quizapp.students s,quizapp.questions q             
+where 1=1
+and s.username='narender'
+and s.test_id='flat-bullfrog'
+and s.qid=q.qid 
+and s.test_id=q.test_id             
+and s.ans=q.ans]]></console>
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseEditorStateManager">
     <last-used-providers />
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
-    <open-files />
+    <open-files>
+      <object connection-id="3acf3a67-fe3f-49f6-b63f-93fa6d1f0c9f" object-ref="schemas/quizapp/tables/teachers" />
+      <object connection-id="3acf3a67-fe3f-49f6-b63f-93fa6d1f0c9f" object-ref="schemas/quizapp/tables/users" />
+      <object connection-id="3acf3a67-fe3f-49f6-b63f-93fa6d1f0c9f" object-ref="consoles/Connection" />
+      <object connection-id="3acf3a67-fe3f-49f6-b63f-93fa6d1f0c9f" object-ref="schemas/quizapp/tables/questions" />
+    </open-files>
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
     <connection id="3acf3a67-fe3f-49f6-b63f-93fa6d1f0c9f">
@@ -33,10 +44,15 @@
     <filter-actions connection-id="3acf3a67-fe3f-49f6-b63f-93fa6d1f0c9f" dataset="quizapp.users" active-filter-id="a870fc66-4053-4dd9-8912-7a54b2ab32fe">
       <filter id="a870fc66-4053-4dd9-8912-7a54b2ab32fe" name="Filter" temporary="false" custom-name="false" type="basic" join-type="AND" />
     </filter-actions>
-    <filter-actions connection-id="3acf3a67-fe3f-49f6-b63f-93fa6d1f0c9f" dataset="quizapp.questions" active-filter-id="" />
+    <filter-actions connection-id="3acf3a67-fe3f-49f6-b63f-93fa6d1f0c9f" dataset="quizapp.questions" active-filter-id="54e27888-73ea-4162-86e1-d5368bdecb3f">
+      <filter id="54e27888-73ea-4162-86e1-d5368bdecb3f" name="pumpkin-albatross" temporary="false" custom-name="false" type="basic" join-type="AND">
+        <condition column="test_id" operator="=" value="pumpkin-albatross" active="true" />
+      </filter>
+    </filter-actions>
     <filter-actions connection-id="3acf3a67-fe3f-49f6-b63f-93fa6d1f0c9f" dataset="mysql.db" active-filter-id="acab9235-1737-476a-9efc-1fd420d2c543">
       <filter id="acab9235-1737-476a-9efc-1fd420d2c543" name="Filter 1" temporary="false" custom-name="false" type="basic" join-type="AND" />
     </filter-actions>
+    <filter-actions connection-id="3acf3a67-fe3f-49f6-b63f-93fa6d1f0c9f" dataset="quizapp.teachers" active-filter-id="" />
     <filter-actions connection-id="3acf3a67-fe3f-49f6-b63f-93fa6d1f0c9f" dataset="quizapp.students" active-filter-id="" />
   </component>
   <component name="DBNavigator.Project.ExecutionManager">

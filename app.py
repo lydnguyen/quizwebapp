@@ -91,7 +91,7 @@ def contact():
 def lostpassword():
     if request.method == 'POST':
         lpemail = request.form['lpemail']
-        cur = mysql.cursor()
+        cur = mysql.cursor(dictionary=True)
         cur.execute('SELECT * from quizapp.users where email = %s', [lpemail])
         results = cur.fetchall()
         if results is not None:
@@ -128,9 +128,9 @@ def lpnewpwd():
         cpwd = request.form['cpwd']
         slpemail = session['seslpemail']
         if (npwd == cpwd):
-            cur = mysql.cursor()
+            cur = mysql.cursor(dictionary=True)
             cur.execute('UPDATE quizapp.users set password = %s where email = %s', (npwd, slpemail))
-            mysql.connection.commit()
+            mysql.commit()
             cur.close()
             session.clear()
             return render_template('login.html', success="Your password was sucessfully changed.")
@@ -220,10 +220,10 @@ def verifyEmail():
         dbUsername = session['tempUsername']
         dbPassword = session['tempPassword']
         if (theOTP == mOTP):
-            cur = mysql.cursor()
+            cur = mysql.cursor(dictionary=True)
             cur.execute('INSERT INTO quizapp.users(username,name,email, password,confirmed) values(%s,%s,%s,%s,1)',
                         (dbUsername, dbName, dbEmail, dbPassword))
-            mysql.connection.commit()
+            mysql.commit()
             cur.close()
             session.clear()
             return render_template('login.html', success="Thanks for registering! You are sucessfully verified.")
@@ -237,7 +237,7 @@ def changePassword():
     if request.method == "POST":
         oldPassword = request.form['oldpassword']
         newPassword = request.form['newpassword']
-        cur = mysql.cursor()
+        cur = mysql.cursor(dictionary=True)
         cur.execute("SELECT * from quizapp.users where username = '" + session['username'] + "'")
         results = cur.fetchone()
         if results is not None:
@@ -245,7 +245,7 @@ def changePassword():
             if (password == oldPassword):
                 cur.execute("UPDATE quizapp.users SET password = %s WHERE username = %s",
                             [newPassword, session['username']])
-                mysql.connection.commit()
+                mysql.commit()
                 msg = "Changed successfully"
                 flash('Changed successfully.', 'success')
                 cur.close()
@@ -314,12 +314,12 @@ def create_test():
         test_id = generate_slug(2)
         with open('questions/' + filename) as csvfile:
             reader = csv.DictReader(csvfile, delimiter=',')
-            cur = mysql.cursor()
+            cur = mysql.cursor(dictionary=True)
             for row in reader:
                 cur.execute(
                     'INSERT INTO quizapp.questions(test_id,qid,q,a,b,c,d,ans,marks) values(%s,%s,%s,%s,%s,%s,%s,%s,%s)',
                     (test_id, row['qid'], row['q'], row['a'], row['b'], row['c'], row['d'], row['ans'], 1))
-            cur.connection.commit()
+            mysql.commit()
             start_date = form.start_date.data
             end_date = form.end_date.data
             start_time = form.start_time.data
@@ -332,7 +332,7 @@ def create_test():
             cur.execute(
                 'INSERT INTO quizapp.teachers (username, test_id, start, end, password, subject, topic) values(%s,%s,%s,%s,%s,%s,%s)',
                 (dict(session)['username'], test_id, start_date_time, end_date_time, password, subject, topic))
-            cur.connection.commit()
+            mysql.commit()
             cur.close()
             flash(f'Test ID: {test_id}', 'success')
             return redirect(url_for('dashboard'))
@@ -342,7 +342,7 @@ def create_test():
 @app.route('/deltidlist', methods=['GET'])
 @is_logged
 def deltidlist():
-    cur = mysql.cursor()
+    cur = mysql.cursor(dictionary=True)
     cur.execute('SELECT test_id from quizapp.teachers where username = %s', [session['username']])
     results = cur.fetchall()
     if results is not None:
@@ -356,7 +356,7 @@ def deltidlist():
 def deldispques():
     if request.method == 'POST':
         tidoption = request.form['choosetid']
-        cur = mysql.cursor()
+        cur = mysql.cursor(dictionary=True)
         cur.execute('SELECT * from quizapp.questions where test_id = %s', [tidoption])
         callresults = cur.fetchall()
         cur.close()
@@ -366,10 +366,10 @@ def deldispques():
 @app.route('/<testid>/<qid>')
 @is_logged
 def del_qid(testid, qid):
-    cur = mysql.cursor()
+    cur = mysql.cursor(dictionary=True)
     cur.execute('DELETE FROM quizapp.questions where test_id = %s and qid =%s', (testid, qid))
     results = cur.fetchall()
-    mysql.connection.commit()
+    mysql.commit()
     if results is not None:
         msg = "Deleted successfully"
         flash('Deleted successfully.', 'success')
@@ -382,7 +382,7 @@ def del_qid(testid, qid):
 @app.route('/updatetidlist', methods=['GET'])
 @is_logged
 def updatetidlist():
-    cur = mysql.cursor()
+    cur = mysql.cursor(dictionary=True)
     cur.execute('SELECT test_id from quizapp.teachers where username = %s', [session['username']])
     results = cur.fetchall()
     if results is not None:
@@ -395,7 +395,7 @@ def updatetidlist():
 def updatedispques():
     if request.method == 'POST':
         tidoption = request.form['choosetid']
-        cur = mysql.cursor()
+        cur = mysql.cursor(dictionary=True)
         cur.execute('SELECT * from quizapp.questions where test_id = %s', [tidoption])
         callresults = cur.fetchall()
         cur.close()
@@ -406,10 +406,10 @@ def updatedispques():
 @is_logged
 def update_quiz(testid, qid):
     if request.method == 'GET':
-        cur = mysql.cursor()
+        cur = mysql.cursor(dictionary=True)
         cur.execute('SELECT * FROM quizapp.questions where test_id = %s and qid =%s', (testid, qid))
         uresults = cur.fetchall()
-        mysql.connection.commit()
+        mysql.commit()
         return render_template("updateQuestions.html", uresults=uresults)
     if request.method == 'POST':
         ques = request.form['ques']
@@ -418,11 +418,11 @@ def update_quiz(testid, qid):
         co = request.form['co']
         do = request.form['do']
         anso = request.form['anso']
-        cur = mysql.cursor()
+        cur = mysql.cursor(dictionary=True)
         cur.execute(
             'UPDATE quizapp.questions SET q = %s, a = %s, b = %s, c = %s, d = %s, ans = %s where test_id = %s and qid = %s',
             (ques, ao, bo, co, do, anso, testid, qid))
-        cur.connection.commit()
+        mysql.commit()
         msg = "Updated successfully"
         flash('Updated successfully.', 'success')
         cur.close()
@@ -436,7 +436,7 @@ def update_quiz(testid, qid):
 @app.route('/viewquestions', methods=['GET'])
 @is_logged
 def viewquestions():
-    cur = mysql.cursor()
+    cur = mysql.cursor(dictionary=True)
     cur.execute('SELECT test_id from quizapp.teachers where username = %s', [session['username']])
     results = cur.fetchall()
     if results is not None:
@@ -449,7 +449,7 @@ def viewquestions():
 def displayquestions():
     if request.method == 'POST':
         tidoption = request.form['choosetid']
-        cur = mysql.cursor()
+        cur = mysql.cursor(dictionary=True)
         cur.execute('SELECT * from quizapp.questions where test_id = %s', [tidoption])
         callresults = cur.fetchall()
         cur.close()
@@ -460,29 +460,29 @@ def displayquestions():
 @is_logged
 def test(testid):
     if request.method == 'GET':
-        cur = mysql.cursor()
+        cur = mysql.cursor(dictionary=True)
         cur.execute('SELECT * from quizapp.questions where test_id = %s', [testid])
         results = cur.fetchall()
         cur.close()
-        cur = mysql.cursor()
+        cur = mysql.cursor(dictionary=True)
         cur.execute('SELECT end from quizapp.teachers where test_id = %s', [testid])
         results2 = cur.fetchall()
         cur.close()
         return render_template("testquiz.html", callresults=results, callresults2=results2)
     if request.method == 'POST':
-        cur = mysql.cursor()
+        cur = mysql.cursor(dictionary=True)
         cur.execute('SELECT COUNT(qid) from quizapp.questions where test_id = %s', [testid])
         results1 = cur.fetchone()
         cur.close()
         completed = 1
         for sa in range(1, results1['COUNT(qid)'] + 1):
             answerByStudent = request.form[str(sa)]
-            cur = mysql.cursor()
+            cur = mysql.cursor(dictionary=True)
             cur.execute('INSERT INTO quizapp.students values(%s,%s,%s,%s)',
                         (session['username'], testid, sa, answerByStudent))
-            mysql.connection.commit()
+            mysql.commit()
         cur.execute('INSERT INTO quizapp.studentTestInfo values(%s,%s,%s)', (session['username'], testid, completed))
-        mysql.connection.commit()
+        mysql.commit()
         cur.close()
         flash('Successfully Test Submitted', 'success')
         return redirect(url_for('dashboard'))
@@ -496,7 +496,7 @@ def give_test():
     if request.method == 'POST' and form.validate():
         test_id = form.test_id.data
         password_candidate = form.password.data
-        cur = mysql.cursor()
+        cur = mysql.cursor(dictionary=True)
         cur.execute('SELECT * from quizapp.teachers where test_id = %s', [test_id])
         results = cur.fetchone()
         if results is not None:
@@ -537,7 +537,7 @@ def give_test():
 
 
 def totmarks(username, tests):
-    cur = mysql.cursor()
+    cur = mysql.cursor(dictionary=True)
     for test in tests:
         testid = test['test_id']
         cur.execute("select sum(marks) as totalmks from students s,questions q \
@@ -556,17 +556,14 @@ def totmarks(username, tests):
 
 def marks_calc(username, testid):
     if username == session['username']:
-        cur = mysql.connection.cursor()
+        cur = mysql.cursor(dictionary=True)
         cur.execute("select sum(marks) as totalmks from students s,questions q \
             where s.username=%s and s.test_id=%s and s.qid=q.qid and s.test_id=q.test_id \
             and s.ans=q.ans", (username, testid))
         results = cur.fetchone()
-        if str(results['totalmks']) == 'None':
+        print(results)
+        if results['totalmks'] is None:
             results['totalmks'] = 0
-            return results['totalmks']
-        if "Decimal" not in str(results['totalmks']):
-            mstr = str(results['totalmks']).replace('Decimal', '')
-            results['totalmks'] = mstr
             return results['totalmks']
         else:
             return results['totalmks']
@@ -576,7 +573,7 @@ def marks_calc(username, testid):
 @is_logged
 def tests_given(username):
     if username == session['username']:
-        cur = mysql.cursor()
+        cur = mysql.cursor(dictionary=True)
         cur.execute(
             'select distinct(students.test_id),subject,topic from quizapp.students,quizapp.teachers where students.username = %s and students.test_id=teachers.test_id',
             [username])
@@ -592,15 +589,17 @@ def tests_given(username):
 @is_logged
 def student_results(username, testid):
     if username == session['username']:
-        cur = mysql.cursor()
+        cur = mysql.cursor(dictionary=True)
         cur.execute(
-            'select users.name as name,users.username as username,test_id from quizapp.studentTestInfo,quizapp.sers where test_id = %s and completed = 1 and studentTestInfo.username=users.username ',
+            'select users.name as name,users.username as username,test_id from quizapp.studenttestInfo,quizapp.users where test_id = %s and completed = 1 and studenttestInfo.username=users.username ',
             [testid])
         results = cur.fetchall()
         final = []
         count = 1
         for user in results:
             score = marks_calc(user['username'], testid)
+            print('----------------')
+            print(score)
             user['srno'] = count
             user['marks'] = score
             final.append([count, user['name'], score])
@@ -620,7 +619,7 @@ def student_results(username, testid):
 @is_logged
 def tests_created(username):
     if username == session['username']:
-        cur = mysql.cursor()
+        cur = mysql.cursor(dictionary=True)
         cur.execute('select * from quizapp.teachers where username = %s', [username])
         results = cur.fetchall()
         return render_template('tests_created.html', tests=results)
